@@ -258,3 +258,21 @@ left: 720px;
 top: -455px;
 left: 100px;
 }
+
+.homebutton{
+    position: absolute;
+    top: 140px;
+left: 30px;
+    margin-right:auto ;
+    margin-left:auto ;
+    margin-top: -110px ;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: -25px;
+    padding-bottom: 5px;
+    background-color: rgba(0, 22, 27, 0.678);
+    width: 60px;
+    height: 9x;
+        border: 5px solid #ffcb31;
+    
+}
