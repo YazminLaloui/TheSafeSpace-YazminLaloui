@@ -10,17 +10,201 @@
     <link rel="stylesheet" href="Style.css">
 <meta name= "description" content= "Welcome to the Safe Space! Created by Yazmin Laloui" >
 
+<script type="text/javascript">
+    // <![CDATA[
+    var colours=new Array('#01d8ff', '#ffa801', '#fff001', '#0b4d69', '#ff7e00', '#95c9c1'); // colours of the hearts
+    var minisize=16; // smallest size of hearts in pixels
+    var maxisize=28; // biggest size of hearts in pixels
+    var hearts=66; // maximum number of hearts on screen
+    var over_or_under="over"; // set to "over" for hearts to always be on top, or "under" to allow them to float behind other objects
+    
+    /*****************************
+    *JavaScript Love Heart Cursor*
+    *  (c)2013+ mf2fm web-design *
+    *   http://www.mf2fm.com/rv  *
+    *  DON'T EDIT BELOW THIS BOX *
+    *****************************/
+    var x=ox=400;
+    var y=oy=300;
+    var swide=800;
+    var shigh=600;
+    var sleft=sdown=0;
+    var herz=new Array();
+    var herzx=new Array();
+    var herzy=new Array();
+    var herzs=new Array();
+    var kiss=false;
+    
+    if (typeof('addRVLoadEvent')!='function') function addRVLoadEvent(funky) {
+      var oldonload=window.onload;
+      if (typeof(oldonload)!='function') window.onload=funky;
+      else window.onload=function() {
+        if (oldonload) oldonload();
+        funky();
+      }
+    }
+    
+    addRVLoadEvent(mwah);
+    
+    function mwah() { if (document.getElementById) {
+      var i, heart;
+      for (i=0; i<hearts; i++) {
+        heart=createDiv("auto", "auto");
+        heart.style.visibility="hidden";
+        heart.style.zIndex=(over_or_under=="over")?"1001":"0";
+        heart.style.color=colours[i%colours.length];
+        heart.style.pointerEvents="none";
+        if (navigator.appName=="Microsoft Internet Explorer") heart.style.filter="alpha(opacity=75)";
+        else heart.style.opacity=0.75;
+        heart.appendChild(document.createTextNode(String.fromCharCode(9829)));
+        document.body.appendChild(heart);
+        herz[i]=heart;
+        herzy[i]=false;
+      }
+      set_scroll();
+      set_width();
+      herzle();
+    }}
+    
+    function herzle() {
+      var c;
+      if (Math.abs(x-ox)>1 || Math.abs(y-oy)>1) {
+        ox=x;
+        oy=y;
+        for (c=0; c<hearts; c++) if (herzy[c]===false) {
+          herz[c].firstChild.nodeValue=String.fromCharCode(9829);
+          herz[c].style.left=(herzx[c]=x-minisize/2)+"px";
+          herz[c].style.top=(herzy[c]=y-minisize)+"px";
+          herz[c].style.fontSize=minisize+"px";
+          herz[c].style.fontWeight='normal';
+          herz[c].style.visibility='visible';
+          herzs[c]=minisize;
+          break;
+        }
+      }
+      for (c=0; c<hearts; c++) if (herzy[c]!==false) blow_me_a_kiss(c);
+      setTimeout("herzle()", 40);
+    }
+    
+    document.onmousedown=pucker;
+    document.onmouseup=function(){clearTimeout(kiss);};
+    
+    function pucker() {
+      ox=-1;
+      oy=-1;
+      kiss=setTimeout('pucker()', 100);
+    }
+    
+    function blow_me_a_kiss(i) {
+      herzy[i]-=herzs[i]/minisize+i%2;
+      herzx[i]+=(i%5-2)/5;
+      if (herzy[i]<sdown-herzs[i] || herzx[i]<sleft-herzs[i] || herzx[i]>sleft+swide-herzs[i]) {
+        herz[i].style.visibility="hidden";
+        herzy[i]=false;
+      }
+      else if (herzs[i]>minisize+2 && Math.random()<.5/hearts) break_my_heart(i);
+      else {
+        if (Math.random()<maxisize/herzy[i] && herzs[i]<maxisize) herz[i].style.fontSize=(++herzs[i])+"px";
+        herz[i].style.top=herzy[i]+"px";
+        herz[i].style.left=herzx[i]+"px";
+      }
+    }
+    
+    function break_my_heart(i) {
+      var t;
+      herz[i].firstChild.nodeValue=String.fromCharCode(9676);
+      herz[i].style.fontWeight='bold';
+      herzy[i]=false;
+      for (t=herzs[i]; t<=maxisize; t++) setTimeout('herz['+i+'].style.fontSize="'+t+'px"', 60*(t-herzs[i]));
+      setTimeout('herz['+i+'].style.visibility="hidden";', 60*(t-herzs[i]));
+    }
+    
+    document.onmousemove=mouse;
+    function mouse(e) {
+      if (e) {
+        y=e.pageY;
+        x=e.pageX;
+      }
+      else {
+        set_scroll();
+        y=event.y+sdown;
+        x=event.x+sleft;
+      }
+    }
+    
+    window.onresize=set_width;
+    function set_width() {
+      var sw_min=999999;
+      var sh_min=999999;
+      if (document.documentElement && document.documentElement.clientWidth) {
+        if (document.documentElement.clientWidth>0) sw_min=document.documentElement.clientWidth;
+        if (document.documentElement.clientHeight>0) sh_min=document.documentElement.clientHeight;
+      }
+      if (typeof(self.innerWidth)=='number' && self.innerWidth) {
+        if (self.innerWidth>0 && self.innerWidth<sw_min) sw_min=self.innerWidth;
+        if (self.innerHeight>0 && self.innerHeight<sh_min) sh_min=self.innerHeight;
+      }
+      if (document.body.clientWidth) {
+        if (document.body.clientWidth>0 && document.body.clientWidth<sw_min) sw_min=document.body.clientWidth;
+        if (document.body.clientHeight>0 && document.body.clientHeight<sh_min) sh_min=document.body.clientHeight;
+      }
+      if (sw_min==999999 || sh_min==999999) {
+        sw_min=800;
+        sh_min=600;
+      }
+      swide=sw_min;
+      shigh=sh_min;
+    }
+    
+    window.onscroll=set_scroll;
+    function set_scroll() {
+      if (typeof(self.pageYOffset)=='number') {
+        sdown=self.pageYOffset;
+        sleft=self.pageXOffset;
+      }
+      else if (document.body && (document.body.scrollTop || document.body.scrollLeft)) {
+        sdown=document.body.scrollTop;
+        sleft=document.body.scrollLeft;
+      }
+      else if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft)) {
+        sleft=document.documentElement.scrollLeft;
+        sdown=document.documentElement.scrollTop;
+      }
+      else {
+        sdown=0;
+        sleft=0;
+      }
+    }
+    
+    function createDiv(height, width) {
+      var div=document.createElement("div");
+      div.style.position="absolute";
+      div.style.height=height;
+      div.style.width=width;
+      div.style.overflow="hidden";
+      div.style.backgroundColor="transparent";
+      return (div);
+    }
+    // ]]>
+    </script>
 </head>
 
 <body>
+
  
     <h1> 
-         Welcome to the safe space!
+         Welcome to the safe space! 
     </h1>
-   
-    <div class="box1">
-<p class="highlight-text"> Here you will explore, become immersed in your thoughts and learn to begin to unpack the mind. Mindfulness begins with listening and focusing. This page will guide you through your meditations and teach you the impotence of practicing positive affirmations, start by scrolling down! The deeper you get, the more you will unwind, unpack and begin to understand why it is so important to practice mindfulness.
 
+
+    <div class="box1">
+<p class="accenttype"> <b> Welcome </b> </p>
+<p class="highlight-text">    Here you will explore, become immersed in your thoughts and learn to begin to unpack the mind. Mindfulness begins with listening and focusing. This page will guide you through meditations that will relieve your stress and help you to relax and most importantly teach you the importance of practicing positive affirmations.
+    <p class="accenttype"> <b> Start by exploring my page! </b></p>
+
+<p class="highlight-text">
+   The deeper you get, the more you will unwind, unpack and begin to understand why it is so important to practice mindfulness. 
+    <br>
 
 
 
@@ -28,8 +212,100 @@
     </div>
 
     <div class="box2">
-     <p class="highlight-text"> second box </p>
+ 
+        <p class="accenttype">  <b>What are your intentions?</b></p>
+        
+         <p class="highlight-text">
+         Before we begin, what are your dreams, goals and intentions?
+What has brought you here? Curiosity? Looking to learn more about yourself? Not sure?
+It’s completely okay if you are not sure what your answers are before we begin but the reason I ask is because I want you to begin critically thinking about what intentions are and the importance of them.
+Everyone is different and we do not all share the same hopes and dreams. Some of us want to be family oriented and dream to have a big family one day, some of us are business oriented and dream to obtain a successful business one day, some of us are both. Though we do not share the exact same dreams, goals and aspirations it is crucial to begin unpacking why we even give ourselves these ambitions in the first place.
+
+    <br>
+    </p>
      </div>
 
+    </p>
+</div>
+
+<div class="box3">
+
+    <p class="accenttype">  <b>Watch this video! </b></p>
+
+ <iframe width="560" height="315"
+  src="https://www.youtube.com/embed/sG7DBA-mgFY" 
+  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+</iframe>
+ </div>
+
+
+ <div class="box4">
+    <p class="accenttype"> <b> Yazmin’s purpose </b>  </p>
+    <p class="highlight-text">  
+        The purpose of why I wanted to create a safe space like this is purely because I myself struggle with anxiety. Anxiety can be crippling, it feels like a weight on our shoulders at times, it can feel like a boulder blocking us from accomplishing our goals and ambitions. It is draining and tiring to deal with when all you want to do is push forward and get things done.
+        I created this safe space with the intent to invite viewers to take a moment and take a breath. It can be extremely difficult nowadays to step back and breathe considering so many things are going on around us. The weight of the world can feel overbearing and at times extremely overwhelming, however, we cannot allow our minds to become submerged in all of the negatives floating around us. We must train our minds to become stronger and we must train ourselves to be kind to ourselves in the process. 
+        <br>
+
+        <p class="accenttype">
+       <i>You are beautiful! Give yourself a break.</i>
+    </p>
+    </div>
 </body>
+
+
+
+<div class="box5">
+        <p class="accenttype"> <b>What is crystal healing?</b> </p>
+        <p class="highlight-text"> 
+    
+    <img src="https://www.dermstore.com/blog/wp-content/uploads/2018/03/Quartz_750x620.gif" 
+    width= 550px;
+    height= 400px;
+}
+    alt="crystals"
+    >
+    <p class="highlight-text"> 
+    <i>What is crystal healing? </i>
+    Crystal healing is an alternative medical technique in which crystals and other stones are used to cure ailments and protect against disease. This technique opens the soul and cleanses out bad energy and stress allowing positive, healing energy to flow into the body as negative, disease-causing energy flows out.
+    Want to learn more about crystal healing?
+    <a href="file:///Users/yazmin/Desktop/Project%200/Understanding_body.html/secondpage.html"> CLICK ME!</a>
+    
+
+</p>
+
+  
+</div>
+</body>
+
+<div class="box6">
+        <p class="accenttype"> <b>What are breathing exercises?</b> </p>
+    
+<img class="image1" src="https://cdn.doyou.com/articles/7b-1575919919782.gif=w1080"
+width= 450px;
+    height= 480px;
+    alt="yoga"
+>
+<p class="highlight-text"> 
+    Would you like to practice some breathing exercises?
+    <a href="file:///Users/yazmin/Desktop/Project%200/Understanding_body.html/secondpage.html"> CLICK ME! </a>
+     to be guided through some stress-relieving breathing exercises that will brighten your mood and uplift your spirit! Are you new to breathing exercises? That’s perfectly fine we are all beginners here, you are more than welcome to try some out!
+</p>
+    </div>
+
+
+    <div class="audiobox">
+
+<audio controls>
+
+<source src="Audio.mp3" type="audio/mpeg">
+    <source src="Audio.ogg" type="audio/ogg">
+        Your browser does not support the audio element.
+</audio>
+</div>
+
+
+
+</body>
+
 </html>
