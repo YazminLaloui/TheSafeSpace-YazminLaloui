@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Safe Space </title>
+    <link rel="stylesheet" href="Style.css">
+<meta name= "description" content= "Welcome to the Safe Space! Created by Yazmin Laloui" >
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Safe Space </title>
+<link rel="stylesheet" href="Style.css">
+<meta name= "description" content= "Welcome to the Safe Space! Created by Yazmin Laloui" >
+
+<script type="text/javascript">
+// <![CDATA[
+var colours=new Array('#01d8ff', '#ffa801', '#fff001', '#0b4d69', '#ff7e00', '#95c9c1'); // colours of the hearts
+var minisize=16; // smallest size of hearts in pixels
+var maxisize=28; // biggest size of hearts in pixels
+var hearts=66; // maximum number of hearts on screen
+var over_or_under="over"; // set to "over" for hearts to always be on top, or "under" to allow them to float behind other objects
+
+/*****************************
+*JavaScript Love Heart Cursor*
+*  (c)2013+ mf2fm web-design *
+*   http://www.mf2fm.com/rv  *
+*  DON'T EDIT BELOW THIS BOX *
+*****************************/
+var x=ox=400;
+var y=oy=300;
+var swide=800;
+var shigh=600;
+var sleft=sdown=0;
+var herz=new Array();
+var herzx=new Array();
+var herzy=new Array();
+var herzs=new Array();
+var kiss=false;
+
+if (typeof('addRVLoadEvent')!='function') function addRVLoadEvent(funky) {
+  var oldonload=window.onload;
+  if (typeof(oldonload)!='function') window.onload=funky;
+  else window.onload=function() {
+    if (oldonload) oldonload();
+    funky();
+  }
+}
+
+addRVLoadEvent(mwah);
+
+function mwah() { if (document.getElementById) {
+  var i, heart;
+  for (i=0; i<hearts; i++) {
+    heart=createDiv("auto", "auto");
+    heart.style.visibility="hidden";
+    heart.style.zIndex=(over_or_under=="over")?"1001":"0";
+    heart.style.color=colours[i%colours.length];
+    heart.style.pointerEvents="none";
+    if (navigator.appName=="Microsoft Internet Explorer") heart.style.filter="alpha(opacity=75)";
+    else heart.style.opacity=0.75;
+    heart.appendChild(document.createTextNode(String.fromCharCode(9829)));
+    document.body.appendChild(heart);
+    herz[i]=heart;
+    herzy[i]=false;
+  }
+  set_scroll();
+  set_width();
+  herzle();
+}}
+
+function herzle() {
+  var c;
+  if (Math.abs(x-ox)>1 || Math.abs(y-oy)>1) {
+    ox=x;
+    oy=y;
+    for (c=0; c<hearts; c++) if (herzy[c]===false) {
+      herz[c].firstChild.nodeValue=String.fromCharCode(9829);
+      herz[c].style.left=(herzx[c]=x-minisize/2)+"px";
+      herz[c].style.top=(herzy[c]=y-minisize)+"px";
+      herz[c].style.fontSize=minisize+"px";
+      herz[c].style.fontWeight='normal';
+      herz[c].style.visibility='visible';
+      herzs[c]=minisize;
+      break;
+    }
+  }
+  for (c=0; c<hearts; c++) if (herzy[c]!==false) blow_me_a_kiss(c);
+  setTimeout("herzle()", 40);
+}
+
+document.onmousedown=pucker;
+document.onmouseup=function(){clearTimeout(kiss);};
+
+function pucker() {
+  ox=-1;
+  oy=-1;
+  kiss=setTimeout('pucker()', 100);
+}
+
+function blow_me_a_kiss(i) {
+  herzy[i]-=herzs[i]/minisize+i%2;
+  herzx[i]+=(i%5-2)/5;
+  if (herzy[i]<sdown-herzs[i] || herzx[i]<sleft-herzs[i] || herzx[i]>sleft+swide-herzs[i]) {
+    herz[i].style.visibility="hidden";
+    herzy[i]=false;
+  }
+  else if (herzs[i]>minisize+2 && Math.random()<.5/hearts) break_my_heart(i);
+  else {
+    if (Math.random()<maxisize/herzy[i] && herzs[i]<maxisize) herz[i].style.fontSize=(++herzs[i])+"px";
+    herz[i].style.top=herzy[i]+"px";
+    herz[i].style.left=herzx[i]+"px";
+  }
+}
+
+function break_my_heart(i) {
+  var t;
+  herz[i].firstChild.nodeValue=String.fromCharCode(9676);
+  herz[i].style.fontWeight='bold';
+  herzy[i]=false;
+  for (t=herzs[i]; t<=maxisize; t++) setTimeout('herz['+i+'].style.fontSize="'+t+'px"', 60*(t-herzs[i]));
+  setTimeout('herz['+i+'].style.visibility="hidden";', 60*(t-herzs[i]));
+}
+
+document.onmousemove=mouse;
+function mouse(e) {
+  if (e) {
+    y=e.pageY;
+    x=e.pageX;
+  }
+  else {
+    set_scroll();
+    y=event.y+sdown;
+    x=event.x+sleft;
+  }
+}
+
+window.onresize=set_width;
+function set_width() {
+  var sw_min=999999;
+  var sh_min=999999;
+  if (document.documentElement && document.documentElement.clientWidth) {
+    if (document.documentElement.clientWidth>0) sw_min=document.documentElement.clientWidth;
+    if (document.documentElement.clientHeight>0) sh_min=document.documentElement.clientHeight;
+  }
+  if (typeof(self.innerWidth)=='number' && self.innerWidth) {
+    if (self.innerWidth>0 && self.innerWidth<sw_min) sw_min=self.innerWidth;
+    if (self.innerHeight>0 && self.innerHeight<sh_min) sh_min=self.innerHeight;
+  }
+  if (document.body.clientWidth) {
+    if (document.body.clientWidth>0 && document.body.clientWidth<sw_min) sw_min=document.body.clientWidth;
+    if (document.body.clientHeight>0 && document.body.clientHeight<sh_min) sh_min=document.body.clientHeight;
+  }
+  if (sw_min==999999 || sh_min==999999) {
+    sw_min=800;
+    sh_min=600;
+  }
+  swide=sw_min;
+  shigh=sh_min;
+}
+
+window.onscroll=set_scroll;
+function set_scroll() {
+  if (typeof(self.pageYOffset)=='number') {
+    sdown=self.pageYOffset;
+    sleft=self.pageXOffset;
+  }
+  else if (document.body && (document.body.scrollTop || document.body.scrollLeft)) {
+    sdown=document.body.scrollTop;
+    sleft=document.body.scrollLeft;
+  }
+  else if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft)) {
+    sleft=document.documentElement.scrollLeft;
+    sdown=document.documentElement.scrollTop;
+  }
+  else {
+    sdown=0;
+    sleft=0;
+  }
+}
+
+function createDiv(height, width) {
+  var div=document.createElement("div");
+  div.style.position="absolute";
+  div.style.height=height;
+  div.style.width=width;
+  div.style.overflow="hidden";
+  div.style.backgroundColor="transparent";
+  return (div);
+}
+// ]]>
+</script>
+</head>
+
+<body>
+ 
+    <h1> 
+        Take a deep breath
+    </h1>
+   
+    <div class="box1A">
+<p class="highlight-text"> Here you will learn more about what kinds of crystals can help evaluate your spirit, mood, and level of mindfulness.
+    <br>
+    On this page, there are various breathing exercises you can do right now to help relieve stress and bring you to a space in your mind of openness and tranquility.
+    <br>
+    <p class="accenttype"> <b>
+    Explore below and begin your journey to relaxation. 
+</b>
+    </p>
+  
+    <div class="box2A">
+            <p class="accenttype"> <b>What kind of crystal is best for you? </b> </p>           
+    <img class="image3"src="https://ih1.redbubble.net/image.1626902286.0974/flat,750x,075,f-pad,750x1000,f8f8f8.jpg" 
+    width= 500px;
+    height= 600px;
+    alt="stones"
+    >
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<br>
+    <p class="highlight-text"> 
+            Here are a few crystals, which one resonates with you? Which one draws you in?
+‘If you are not too sure <br> 
+<a href="https://cosmiccuts.com/pages/quiz-what-crystal-is-best-for-me
+">  <i>CLICK ME </i></a>
+
+to take a quiz on which crystal is meant for you.
+ Once you've found your suited crystal <br>
+ <a href="https://www.happyglastonbury.co.uk/product-category/crystals/crystal-a-z/
+ "><i> CLICK ME </i> </a>
+  <br>
+  to learn more about the Gemstone.
+With this information, you can choose to purchase your own crystal and keep them in your home and household to bring good pure energy to your environment. 
+</p>
+
+
+</div>
+
+</body>
+
+<div class="box3A">
+        <p class="accenttype"> <b>Let’s do some breathing excercies! </b> </p>
+    
+<img class="image1A" src="https://media.giphy.com/media/3o6Zt0Q2cRfufoljfq/giphy.gif"
+width= 450px;
+    height= 480px;
+    alt="yoga"
+>
+<p class="highlight-text"> 
+ <i> Let’s follow a simple breathing exercise together, all you will need is a quiet safe environment, a positive approach, and an open mind! </i> 
+   <br>
+   <br>
+Sit comfortably on the floor or in a chair.
+<br>
+<br>
+Breathe in through your nose. As you do it, count to five.
+<br>
+<br>
+Breathe out through your nose to the count of five.
+<br>
+<br>
+Repeat several times
+<br>
+<br>
+<p class="accenttype">  
+On your very last breath fill your stomach with air and on your exhale let out a big long roar, expel all of your stress out until you feel a sense of relief. Allow yourself to be vocal, let it all out, and let it go.
+<br>
+<br>
+<p class="highlight-text"> 
+    Further, explore the page for satisfying stress-relieving videos and guided breathing exercises.
+</p>
+
+
+    </div>
+    <img class="imageG1" src="https://i.pinimg.com/originals/38/63/31/386331a53cb02165944ec7cd0bb03b1d.gif"
+    width= 580px;
+        height= 650px;
+        alt="loop"
+    >
+</div>
+<img class="imageG2" src="https://media2.giphy.com/media/1xVc4s9oZrDhO9BOYt/source.gif"
+width= 450px;
+    height= 450px;
+    alt="loop"
+>
+</div>
+
+<div class="audiobox2">
+
+    <audio controls>
+    
+    <source src="Audio.mp3" type="audio/mpeg">
+        <source src="Audio.ogg" type="audio/ogg">
+            Your browser does not support the audio element.
+    </audio>
+    </div>
+    
+    <div class="homebutton"> 
+    
+    <a href="file:///Users/yazmin/Desktop/Project%200/Understanding_body.html/index.html"
+     class="highlight-text"> 
+    <b>Home </b></a>
+</div>
+
+
+</body>
+</html>
